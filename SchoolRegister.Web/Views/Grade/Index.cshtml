@@ -1,0 +1,38 @@
+@model IEnumerable<SchoolRegister.ViewModels.VM.GradeVm>
+
+@{
+    ViewData["Title"] = "Oceny Studentów";
+}
+
+<div class="container mt-4">
+    <h2>Raport Ocen</h2>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Przedmiot</th>
+                <th>Ocena</th>
+                <th>Student</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.SubjectName</td>
+                        <td><span class="badge badge-info" style="font-size: 1.1em;">@item.GradeValue</span></td>
+                        <td>@item.StudentFirstName @item.StudentLastName</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" class="text-center">Brak ocen do wyświetlenia dla wybranego studenta.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a asp-controller="Subject" asp-action="Index" class="btn btn-secondary">Powrót do przedmiotów</a>
+</div>

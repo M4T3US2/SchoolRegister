@@ -12,16 +12,21 @@ namespace SchoolRegister.Services.ConcreteServices;
 
 public class GradeService : BaseService, IGradeService
 {
-    public GradeService(ApplicationDbContext dbContext, IMapper mapper, ILogger logger) 
+    public GradeService(ApplicationDbContext dbContext, IMapper mapper, ILogger logger)
         : base(dbContext, mapper, logger) { }
 
     public GradeVm AddGradeToStudent(AddGradeToStudentVm addGradeToStudentVm)
     {
         var gradeEntity = Mapper.Map<Grade>(addGradeToStudentVm);
-        gradeEntity.DateOfIssue = DateTime.Now; // Dodajemy datę wystawienia
+        gradeEntity.DateOfIssue = DateTime.Now;
         DbContext.Grades.Add(gradeEntity);
         DbContext.SaveChanges();
-        return Mapper.Map<GradeVm>(gradeEntity);
+
+        var savedGrade = DbContext.Grades
+            .Where(g => g.Id == gradeEntity.Id)
+            .FirstOrDefault();
+
+        return Mapper.Map<GradeVm>(savedGrade);
     }
 
     public IEnumerable<GradeVm> GetGradesReportForStudent(GetGradesReportVm getGradesReportVm)
@@ -29,15 +34,19 @@ public class GradeService : BaseService, IGradeService
         var userRequesting = DbContext.Users.FirstOrDefault(u => u.Id == getGradesReportVm.GetterUserId);
         var student = DbContext.Users.OfType<Student>().FirstOrDefault(s => s.Id == getGradesReportVm.StudentId);
 
-        if (userRequesting == null || student == null) return null;
+       
+        if (userRequesting == null || student == null)
+            return Enumerable.Empty<GradeVm>();
 
-        // Prosta logika uprawnień na potrzeby testów:
-        // Jeśli pytający to ten sam uczeń, jego rodzic lub jakikolwiek nauczyciel - dajemy raport
-        bool hasAccess = (userRequesting.Id == student.Id) || 
-                         (userRequesting is Parent p && student.ParentId == p.Id) || 
-                         (userRequesting is Teacher);
+        bool hasAccess = (userRequesting.Id == student.Id)
+            || (userRequesting is Parent p && student.ParentId == p.Id)
+            || (userRequesting is Teacher)
+            || DbContext.UserRoles
+                .Any(ur => ur.UserId == userRequesting.Id
+                    && DbContext.Roles.Any(r => r.Id == ur.RoleId && r.Name == "Admin"));
 
-        if (!hasAccess) return null;
+        if (!hasAccess)
+            return Enumerable.Empty<GradeVm>();
 
         var grades = DbContext.Grades.Where(g => g.StudentId == student.Id);
         return Mapper.Map<IEnumerable<GradeVm>>(grades);

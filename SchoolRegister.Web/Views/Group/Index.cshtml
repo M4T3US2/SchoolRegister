@@ -1,0 +1,50 @@
+@model IEnumerable<SchoolRegister.ViewModels.VM.GroupVm>
+
+@{
+    ViewData["Title"] = "Groups List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Groups (Classes)</h2>
+    <a asp-action="AddOrEditGroup" class="btn btn-primary">Create New Group</a>
+</div>
+
+<table class="table table-hover border">
+    <thead class="table-light">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th class="text-center">
+                Students Count
+            </th>
+            <th class="text-end">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="align-middle">
+                    <strong>@Html.DisplayFor(modelItem => item.Name)</strong>
+                </td>
+                <td class="text-center align-middle">
+                    <span class="badge bg-info text-dark">
+                        @(item.Students?.Count() ?? 0)
+                    </span>
+                </td>
+                <td class="text-end">
+                    <a asp-action="AddOrEditGroup" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">Details / Students</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning text-center">
+        No groups found. Create your first class!
+    </div>
+}

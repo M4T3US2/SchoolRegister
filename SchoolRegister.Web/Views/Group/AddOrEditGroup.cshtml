@@ -1,0 +1,36 @@
+@model SchoolRegister.ViewModels.VM.AddOrUpdateGroupVm
+@{
+    ViewData["Title"] = $"{ViewBag.ActionType} Group";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-6 offset-md-3 card shadow-sm p-4">
+            <form asp-action="AddOrEditGroup">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                @* Ukryte ID - kluczowe przy edycji! *@
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="control-label font-weight-bold">Group Name</label>
+                    <input asp-for="Name" class="form-control" placeholder="e.g. Class 1A" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="fas fa-save"></i> Save Group
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

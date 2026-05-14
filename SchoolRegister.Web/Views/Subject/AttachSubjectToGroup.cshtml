@@ -1,0 +1,11 @@
+@model SchoolRegister.ViewModels.VM.AttachDetachSubjectGroupVm
+<h2>Attach Subject: @ViewBag.SubjectName</h2>
+<form asp-action="AttachSubjectToGroup" method="post">
+    <input type="hidden" asp-for="SubjectId" />
+    <div class="form-group">
+        <label>Select Group</label>
+        <select asp-for="GroupId" class="form-control" asp-items="@ViewBag.GroupsSelectList"></select>
+    </div>
+    <button type="submit" class="btn btn-success mt-2">Attach</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Cancel</a>
+</form>

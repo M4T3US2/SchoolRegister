@@ -1,8 +1,57 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using SchoolRegister.ViewModels.VM
+@model IEnumerable<SchoolRegister.ViewModels.VM.SubjectVm>
+
+@{
+    ViewData["Title"] = "Index";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h2>Subject</h2>
+
+@if (User.Identity?.IsAuthenticated ?? false && User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-controller="Subject" asp-action="AddOrEditSubject" class="btn btn-primary">Create New</a>
+    </p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th>@Html.DisplayNameFor(model => model.TeacherName)</th>
+            <th><label>Groups Count</label></th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.TeacherName)</td>
+                <td>
+                    
+                    @(item.Groups?.Count() ?? 0)
+                </td>
+                <td>
+                    @if (User.Identity?.IsAuthenticated ?? false && User.IsInRole("Admin"))
+                    {
+                       
+                        <a asp-controller="Subject" asp-action="AddOrEditSubject" asp-route-id="@item.Id">Edit</a> @:|
+                        
+                        
+                        <a asp-controller="Subject" asp-action="AttachSubjectToGroup"
+                           asp-route-subjectId="@item.Id">Attach Subject to Group</a> @:|
+                        
+                        
+                        <a asp-controller="Subject" asp-action="DetachSubjectFromGroup"
+                           asp-route-subjectId="@item.Id">Detach Subject from Group</a> @:|
+                    }
+                    <a asp-controller="Subject" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

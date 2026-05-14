@@ -1,0 +1,50 @@
+@model SchoolRegister.ViewModels.VM.SubjectVm
+
+@{
+    ViewData["Title"] = "Subject Details";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Subject Details: @Model.Name</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3 font-weight-bold">Description:</div>
+                <div class="col-sm-9">@Model.Description</div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-3 font-weight-bold">Teacher:</div>
+                <div class="col-sm-9">@Model.TeacherName</div>
+            </div>
+            <hr />
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h4>Assigned Groups:</h4>
+                    @if (Model.Groups != null && Model.Groups.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var group in Model.Groups)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @group.Name
+                                    <span class="badge badge-primary badge-pill">ID: @group.Id</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted italic">This subject is not assigned to any group yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a asp-action="AddOrEditSubject" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>

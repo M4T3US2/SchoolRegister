@@ -1,0 +1,81 @@
+@model SchoolRegister.ViewModels.VM.GroupVm
+
+@{
+    ViewData["Title"] = "Group Details";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Group: <span class="text-primary">@Model.Name</span></h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    </div>
+    <hr />
+
+    <div class="row">
+        <!--Lista obecnych studentów-->
+        <div class="col-md-8">
+            <h4>Students in this group</h4>
+            <table class="table table-hover border shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Students != null && Model.Students.Any())
+                    {
+                        foreach (var student in Model.Students)
+                        {
+                            <tr>
+                                <td>@student.FirstName</td>
+                                <td>@student.LastName</td>
+                                <td>@student.UserName</td>
+                                <td>
+                                    <form asp-action="RemoveStudentFromGroup" method="post" style="display:inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="studentId" value="@student.Id" />
+                                        <input type="hidden" name="groupId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No students assigned to this group yet.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!--Formularz dodawania studenta-->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Add Student to Group</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddStudentToGroup" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="groupId" value="@Model.Id" />
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Select Student</label>
+                            <select name="studentId" class="form-select" asp-items="@ViewBag.StudentsSelectList">
+                                <option value="">-- Choose student --</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Assign Student</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,24 +1,27 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using SchoolRegister.ViewModels.VM;
+using SchoolRegister.Services.Interfaces;
+using SchoolRegister.Web.Controllers;
+using AutoMapper;
+using Microsoft.Extensions.Localization;
 
 namespace SchoolRegister.Web.Controllers;
 
-public class HomeController : Controller
+public class HomeController : BaseController
 {
+    private readonly ISubjectService _subjectService;
+
+    // Wstrzykujemy serwis przedmiotów do konstruktora
+    public HomeController(ILogger<HomeController> logger, IMapper mapper, 
+                          IStringLocalizer<BaseController> localizer, ISubjectService subjectService) 
+                          : base(logger, mapper, localizer)
+    {
+        _subjectService = subjectService;
+    }
+
     public IActionResult Index()
     {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        // Pobieramy listę przedmiotów, żeby Model nie był nullem!
+        var subjects = _subjectService.GetSubjects(s => s.Id > 0);
+        return View(subjects);
     }
 }
