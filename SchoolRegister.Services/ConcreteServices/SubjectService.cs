@@ -22,21 +22,21 @@ namespace SchoolRegister.Services.ConcreteServices
             try
             {
                 if (addOrUpdateVm == null)
-                    throw new ArgumentNullException("View model parameter is null"); 
+                    throw new ArgumentNullException("View model parameter is null");
 
-                var subjectEntity = Mapper.Map<Subject>(addOrUpdateVm); 
-                
+                var subjectEntity = Mapper.Map<Subject>(addOrUpdateVm);
+
                 if (!addOrUpdateVm.Id.HasValue || addOrUpdateVm.Id == 0)
-                    DbContext.Subjects.Add(subjectEntity); 
+                    DbContext.Subjects.Add(subjectEntity);
                 else
-                    DbContext.Subjects.Update(subjectEntity); 
+                    DbContext.Subjects.Update(subjectEntity);
 
-                DbContext.SaveChanges(); 
-                return Mapper.Map<SubjectVm>(subjectEntity); 
+                DbContext.SaveChanges();
+                return Mapper.Map<SubjectVm>(subjectEntity);
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, ex.Message); 
+                Logger.LogError(ex, ex.Message);
                 throw;
             }
         }
@@ -46,14 +46,14 @@ namespace SchoolRegister.Services.ConcreteServices
             try
             {
                 if (filterExpression == null)
-                    throw new ArgumentNullException("FilterExpression is null"); 
+                    throw new ArgumentNullException("FilterExpression is null");
 
-                var subjectEntity = DbContext.Subjects.FirstOrDefault(filterExpression); 
-                return Mapper.Map<SubjectVm>(subjectEntity); 
-            } 
+                var subjectEntity = DbContext.Subjects.FirstOrDefault(filterExpression);
+                return Mapper.Map<SubjectVm>(subjectEntity);
+            }
             catch (Exception ex)
             {
-                Logger.LogError(ex, ex.Message); 
+                Logger.LogError(ex, ex.Message);
                 throw;
             }
         }
@@ -62,15 +62,37 @@ namespace SchoolRegister.Services.ConcreteServices
         {
             try
             {
-                var subjectEntities = DbContext.Subjects.AsQueryable(); 
+                var subjectEntities = DbContext.Subjects.AsQueryable();
                 if (filterExpression != null)
-                    subjectEntities = subjectEntities.Where(filterExpression); 
+                    subjectEntities = subjectEntities.Where(filterExpression);
 
-                return Mapper.Map<IEnumerable<SubjectVm>>(subjectEntities); 
+                return Mapper.Map<IEnumerable<SubjectVm>>(subjectEntities);
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, ex.Message); 
+                Logger.LogError(ex, ex.Message);
+                throw;
+            }
+        }
+
+        public bool RemoveSubject(Expression<Func<Subject, bool>> filterExpression)
+        {
+            try
+            {
+                if (filterExpression == null)
+                    throw new ArgumentNullException("FilterExpression is null");
+
+                var subjectEntity = DbContext.Subjects.FirstOrDefault(filterExpression);
+                if (subjectEntity == null)
+                    return false;
+
+                DbContext.Subjects.Remove(subjectEntity);
+                DbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
                 throw;
             }
         }

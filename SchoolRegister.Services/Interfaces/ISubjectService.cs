@@ -16,5 +16,7 @@ namespace SchoolRegister.Services.Interfaces
         
        
         IEnumerable<SubjectVm> GetSubjects(Expression<Func<Subject, bool>> filterExpression = null);
+
+        bool RemoveSubject(Expression<Func<Subject, bool>> filterExpression);
     }
 }
